@@ -183,8 +183,8 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 
 let time = 0;
 const lengthEl = document.getElementById('length-val');
-const speedEl = document.getElemconfig.headSpeed,
-      y: head.y + dy * factor * config.headSpeed
+const speedEl = document.getElementById('speed-val');
+
 function update() {
   time++;
 
