@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐍 Mouse Snake</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div class="ui">
+    <div class="title">DK's<span class="dot">.</span>SNAKE</div>
+    <div class="subtitle">move your cursor</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-box">
+      <span class="stat-label">LENGTH</span>
+      <span class="stat-value" id="length-val">0</span>
+    </div>
+    <div class="stat-box">
+      <span class="stat-label">SPEED</span>
+      <span class="stat-value" id="speed-val">0</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="colorBtn">🎨 COLOR</button>
+    <button class="btn" id="trailBtn">✨ TRAIL</button>
+    <button class="btn" id="resetBtn">↺ RESET</button>
+  </div>
+
+  <script src="snake.js"></script>
+</body>
+</html>
