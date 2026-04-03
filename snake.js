@@ -3,13 +3,31 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// Device detection
+const isMobile = () => window.matchMedia('(max-width: 768px)').matches || /mobile|android|iphone|ipad|ipod/i.test(navigator.userAgent);
 
-window.addEventListener('resize', () => {
+function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+}
+
+resizeCanvas();
+
+window.addEventListener('resize', resizeCanvas);
+window.addEventListener('orientationchange', () => {
+  setTimeout(resizeCanvas, 100);
 });
+
+// Prevent default touch behaviors on mobile
+document.addEventListener('touchstart', (e) => {
+  if (e.target === canvas) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('gesturestart', (e) => {
+  e.preventDefault();
+}, { passive: false });
 
 // ─── Cursor ───────────────────────────────────────────────────────────────────
 
@@ -20,6 +38,11 @@ document.body.appendChild(cursorEl);
 const scanlines = document.createElement('div');
 scanlines.className = 'scanlines';
 document.body.appendChild(scanlines);
+
+// Hide cursor on mobile
+if (isMobile()) {
+  cursorEl.style.display = 'none';
+}
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -36,14 +59,28 @@ let paletteIndex = 0;
 let palette = PALETTES[paletteIndex];
 let trailMode = false;
 
+// Responsive sizing based on device
+function getGameConfig() {
+  const mobile = isMobile();
+  return {
+    maxSegments: mobile ? 45 : 60,
+    segmentRadius: mobile ? 10 : 14,
+    minDist: mobile ? 8 : 10,
+    headSpeed: 0.35,  // Same speed for both desktop and mobile
+    bodyChainFactor: 0.6,  // Same speed for both desktop and mobile
+  };
+}
+
+let config = getGameConfig();
+
 const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
 let lastMouse = { x: mouse.x, y: mouse.y };
 let speed = 0;
 
 // Snake segments
-const MAX_SEGMENTS = 60;
-const SEGMENT_RADIUS = 14;
-const MIN_DIST = 10;
+let MAX_SEGMENTS = config.maxSegments;
+let SEGMENT_RADIUS = config.segmentRadius;
+let MIN_DIST = config.minDist;
 
 let segments = [];
 let foodParticles = [];
@@ -146,8 +183,8 @@ function lerp(a, b, t) { return a + (b - a) * t; }
 
 let time = 0;
 const lengthEl = document.getElementById('length-val');
-const speedEl = document.getElementById('speed-val');
-
+const speedEl = document.getElemconfig.headSpeed,
+      y: head.y + dy * factor * config.headSpeed
 function update() {
   time++;
 
@@ -173,8 +210,8 @@ function update() {
     if (dd > MIN_DIST) {
       const ratio = (dd - MIN_DIST) / dd;
       segments[i] = {
-        x: curr.x + (prev.x - curr.x) * ratio * 0.6,
-        y: curr.y + (prev.y - curr.y) * ratio * 0.6,
+        x: curr.x + (prev.x - curr.x) * ratio * config.bodyChainFactor,
+        y: curr.y + (prev.y - curr.y) * ratio * config.bodyChainFactor,
       };
     }
   }
@@ -408,3 +445,20 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   foodParticles = [];
   for (let i = 0; i < 8; i++) spawnFood();
 });
+
+// Update game config on orientation change
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    config = getGameConfig();
+    MAX_SEGMENTS = config.maxSegments;
+    SEGMENT_RADIUS = config.segmentRadius;
+    MIN_DIST = config.minDist;
+    initSnake();
+  }, 200);
+});
+
+// Update subtitle text for mobile
+if (isMobile()) {
+  const subtitle = document.getElementById('subtitle-text');
+  subtitle.textContent = 'touch to play';
+}
