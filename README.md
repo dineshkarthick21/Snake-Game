@@ -4,7 +4,7 @@ A modern, interactive Snake game with cursor-based movement and retro-neon aesth
 
 ## 🎮 Live Demo
 
-Play now on **Render**: [https://snake-game-dk.onrender.com](https://snake-game-dk.onrender.com)
+Play now on **Render**: https://dks-snake-game.onrender.com/
 
 ## Features
 
